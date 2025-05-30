@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/CarlosAlmeida1/nodejs-typescript-clean-architecture#readme",
   "devDependencies": {
-    "git-commit-msg-linter": "^5.0.8"
+    "@types/node": "^22.15.28",
+    "git-commit-msg-linter": "^5.0.8",
+    "typescript": "^5.8.3"
   }
 }
