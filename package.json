@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/CarlosAlmeida1/nodejs-typescript-clean-architecture/issues"
   },
-  "homepage": "https://github.com/CarlosAlmeida1/nodejs-typescript-clean-architecture#readme"
+  "homepage": "https://github.com/CarlosAlmeida1/nodejs-typescript-clean-architecture#readme",
+  "devDependencies": {
+    "git-commit-msg-linter": "^5.0.8"
+  }
 }
