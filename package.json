@@ -4,8 +4,8 @@
   "description": "Node.js and TypeScript project following TDD principles with Clean Architecture.",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:staged": "jest"
+    "test": "jest --passWithNoTests",
+    "test:staged": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
