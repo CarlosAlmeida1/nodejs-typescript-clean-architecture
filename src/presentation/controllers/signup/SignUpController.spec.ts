@@ -58,6 +58,27 @@ const makeSut = (): SutTypes => {
 };
 
 describe("SignUp Controller", () => {
+  test("Should return 200 valid data is provided", () => {
+    const { sut } = makeSut();
+    const httRequest = {
+      body: {
+        email: "valid_email",
+        name: "valid_name",
+        password: "valid_password",
+        passwordConfirmation: "valid_password",
+      },
+    };
+
+    const httpResponse = sut.handle(httRequest);
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body).toEqual({
+      id: "valid_id",
+      name: "valid_name",
+      email: "valid_email",
+      password: "valid_password",
+    });
+  });
+
   test("Should return 400 if no name is provided", () => {
     const { sut } = makeSut();
     const httRequest = {
