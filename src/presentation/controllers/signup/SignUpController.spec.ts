@@ -18,14 +18,14 @@ const makeEmailValidator = (): EmailValidator => {
 
 const makeAddAccount = (): AddAccount => {
   class AddAccuntStub implements AddAccount {
-    add(account: AddAccountModel): AccountModel {
+    async add(account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
         id: "valid_id",
         name: "valid_name",
-        email: "valid_email",
+        email: "valid_email@mail.com",
         password: "valid_password",
       };
-      return fakeAccount;
+      return new Promise((resolve) => resolve(fakeAccount));
     }
   }
   return new AddAccuntStub();
@@ -58,28 +58,28 @@ const makeSut = (): SutTypes => {
 };
 
 describe("SignUp Controller", () => {
-  test("Should return 200 valid data is provided", () => {
+  test("Should return 200 valid data is provided", async () => {
     const { sut } = makeSut();
     const httRequest = {
       body: {
-        email: "valid_email",
         name: "valid_name",
+        email: "valid_email@mail.com",
         password: "valid_password",
         passwordConfirmation: "valid_password",
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(200);
     expect(httpResponse.body).toEqual({
       id: "valid_id",
       name: "valid_name",
-      email: "valid_email",
+      email: "valid_email@mail.com",
       password: "valid_password",
     });
   });
 
-  test("Should return 400 if no name is provided", () => {
+  test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const httRequest = {
       body: {
@@ -89,12 +89,12 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("name"));
   });
 
-  test("Should return 400 if no email is provided", () => {
+  test("Should return 400 if no email is provided", async () => {
     const { sut } = makeSut();
     const httRequest = {
       body: {
@@ -104,12 +104,12 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("email"));
   });
 
-  test("Should return 400 if no password is provided", () => {
+  test("Should return 400 if no password is provided", async () => {
     const { sut } = makeSut();
     const httRequest = {
       body: {
@@ -119,12 +119,12 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
   });
 
-  test("Should return 400 if no password confirmation is provided", () => {
+  test("Should return 400 if no password confirmation is provided", async () => {
     const { sut } = makeSut();
     const httRequest = {
       body: {
@@ -134,14 +134,14 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(
       new MissingParamError("passwordConfirmation")
     );
   });
 
-  test("Should return 400 if password confirmation fails", () => {
+  test("Should return 400 if password confirmation fails", async () => {
     const { sut } = makeSut();
     const httRequest = {
       body: {
@@ -152,14 +152,14 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(
       new InvalidParamError("passwordConfirmation")
     );
   });
 
-  test("Should return 400 if an invalid email is provided", () => {
+  test("Should return 400 if an invalid email is provided", async () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, "isValid").mockReturnValueOnce(false);
     const httRequest = {
@@ -171,12 +171,12 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
-  test("Should return 500 if email validator throws", () => {
+  test("Should return 500 if email validator throws", async () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, "isValid").mockImplementationOnce(() => {
       throw new Error();
@@ -191,15 +191,15 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should return 500 if addAccount throws", () => {
+  test("Should return 500 if addAccount throws", async () => {
     const { sut, addAcountStub } = makeSut();
     jest.spyOn(addAcountStub, "add").mockImplementationOnce(() => {
-      throw new Error();
+      return new Promise((resolve, reject) => reject(new Error()));
     });
     const httRequest = {
       body: {
@@ -210,12 +210,12 @@ describe("SignUp Controller", () => {
       },
     };
 
-    const httpResponse = sut.handle(httRequest);
+    const httpResponse = await sut.handle(httRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should call EmailValidator with correct email", () => {
+  test("Should call EmailValidator with correct email", async () => {
     const { sut, emailValidatorStub } = makeSut();
     const isValidSpy = jest.spyOn(emailValidatorStub, "isValid");
     const httRequest = {
@@ -227,11 +227,11 @@ describe("SignUp Controller", () => {
       },
     };
 
-    sut.handle(httRequest);
+    await sut.handle(httRequest);
     expect(isValidSpy).toHaveBeenCalledWith("any_email@mail.com");
   });
 
-  test("Should call addAccount with correct values", () => {
+  test("Should call addAccount with correct values", async () => {
     const { sut, addAcountStub } = makeSut();
     const addSpy = jest.spyOn(addAcountStub, "add");
     const httRequest = {
@@ -243,7 +243,7 @@ describe("SignUp Controller", () => {
       },
     };
 
-    sut.handle(httRequest);
+    await sut.handle(httRequest);
     expect(addSpy).toHaveBeenCalledWith({
       email: "any_email@mail.com",
       name: "any_name",
