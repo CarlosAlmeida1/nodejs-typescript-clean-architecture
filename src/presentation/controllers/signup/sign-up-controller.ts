@@ -16,7 +16,7 @@ export class SignUpController implements Controller {
     this.addAccount = addAccount;
   }
 
-  async handle(httpRequest: HttpRequest): HttpResponse {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields = [
         "name",
