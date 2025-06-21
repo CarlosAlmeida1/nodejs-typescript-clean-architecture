@@ -28,6 +28,7 @@
     "@types/validator": "^13.15.2",
     "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^8.33.0",
+    "bs-logger": "^0.2.6",
     "eslint": "^9.27.0",
     "git-commit-msg-linter": "^5.0.8",
     "husky": "^9.1.7",
