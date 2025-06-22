@@ -4,7 +4,7 @@
   "description": "Node.js and TypeScript project following TDD principles with Clean Architecture.",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test": "jest --passWithNoTests --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/CarlosAlmeida1/nodejs-typescript-clean-architecture#readme",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^5.2.2",
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.14",
     "@types/mongodb": "^4.0.6",
@@ -41,7 +42,6 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@shelf/jest-mongodb": "^5.2.2",
     "bcrypt": "^6.0.0",
     "mongodb": "^6.17.0",
     "validator": "^13.15.15"
